@@ -1,0 +1,53 @@
+const SHUFFLE = false,
+
+			points = [],
+			step = 25;
+
+let connections = [],
+		current = 0,
+		
+		lines;
+
+function preload() {
+	lines = loadStrings("angel-unquantized.txt");
+}
+
+function setup() {
+	createCanvas(windowWidth, windowHeight);
+	background(0);
+
+	while (true) {
+		if (!lines[0]) break;
+
+		const elements = lines.shift().split("|");
+		points.push(elements.slice(1).map(x => parseInt(x)));
+	}
+
+	lines.shift();
+
+	while (true) {
+		if (!lines[0]) break;
+
+		const elements = lines.shift().split("|");
+		connections.push([parseInt(elements[0]), parseInt(elements[1]), parseFloat(elements[2])]);
+	}
+
+	if (SHUFFLE) connections = shuffle(connections);
+
+	translate(width / 2, height / 2);
+	scale(height / 1000);
+	for (const [x, y] of points) point(x, y)
+}
+
+function draw() {
+	translate(width / 2, height / 2);
+	scale(height / 1000);
+
+	for (let i = 0; i < step; i ++) {
+		const connection = connections[current ++];
+		if (!connection) break;
+
+		stroke(255, connection[2]);
+		line(points[connection[0]][0], points[connection[0]][1], points[connection[1]][0], points[connection[1]][1]);
+	}
+}
